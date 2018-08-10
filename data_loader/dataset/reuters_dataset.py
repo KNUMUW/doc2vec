@@ -3,7 +3,11 @@ import pandas as pd
 import multiprocessing as mp
 from bs4 import BeautifulSoup as BS
 from data_loader.dataset.dataset import Dataset
-from data_loader.file_util import FileUtil
+from data_loader.util import get_files_from_dir
+
+
+class FileUtil:
+    pass
 
 
 class ReutersFileUtil(FileUtil):
@@ -61,8 +65,7 @@ class ReutersDataset(Dataset):
             train_set (pandas.DataFrame): training set dataframe.
             test_set (pandas.DataFrame): test set dataframe.
 
-        """                
-        
+        """                        
         files_list = self._file_util.get_files(self._data_path)
         files_list = [path for path in files_list if os.path.basename(path).startswith('reut')]                  
         

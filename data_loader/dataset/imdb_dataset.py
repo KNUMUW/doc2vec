@@ -1,16 +1,39 @@
 import os
-import pandas as pd
-import multiprocessing as mp 
 from data_loader.dataset.dataset import Dataset
-from data_loader.file_util import FileUtil
+from data_loader.util import get_files_from_dir
 
 
-class IMDBFileUtil(FileUtil):
-    """Utility class for accessing files in IMDB movie reviews dataset."""    
+class IMDBDataset(Dataset):
+    """A wrapper class for IMDB movie reviews dataset."""
+
+
+    def __init__(self, data_path):
+        super(IMDBDataset, self).__init__(data_path)
+
+
+    def _get_file_paths(self):
+        """Returns paths to files that make up training and test set, respectively.
+
+        Returns:
+            train_set_paths (list(str)): paths to training data files.
+            test_set_paths (list(str)): paths to test data files.
+
+        """        
+        files_list = []
+
+        for dir_up in ['train', 'test']:
+            for dir_down in ['pos', 'neg']:
+                dir_path = os.path.join(self._data_path, dir_up, dir_down) 
+                files_list.append(get_files_from_dir(dir_path))
+
+        train_set_paths = files_list[0] + files_list[1]
+        test_set_paths = files_list[2] + files_list[3] 
+        
+        return train_set_paths, test_set_paths
 
 
     @staticmethod
-    def load_single_file(path):
+    def _load_single_file(path):
         """Loads a single file from IMDB dataset.
         
         Args:
@@ -20,7 +43,6 @@ class IMDBFileUtil(FileUtil):
             label (int): label of the document.
  
         """
-
         name = os.path.basename(path)
         
         number, rating = name.split('_')
@@ -31,16 +53,20 @@ class IMDBFileUtil(FileUtil):
 
         return content, label 
 
+    
+    @classmethod
+    def _build_dataframe(cls, file_paths):
+        """Builds appropriate dataframe from all given data files.
 
-class IMDBDataset(Dataset):
-    """A wrapper class for IMDB movie reviews dataset."""
+        Args:
+            file_paths (list(str)): paths to all data files we want to wrap as a dataframe. 
+        Returns:
+            dataframe (pandas.DataFrame): the resulting dataframe.            
 
-
-    def __init__(self, data_path):
-        super(IMDBDataset, self).__init__(data_path)
-        self._file_util = IMDBFileUtil()
-
+        """
+        return super(IMDBDataset, cls)._build_dataframe(file_paths)        
         
+
     def get_dataset(self):
         """Returns IMDB movie reviews dataset.
        
@@ -49,20 +75,4 @@ class IMDBDataset(Dataset):
             test_set (pandas.DataFrame): test set dataframe.
 
         """                
-        
-        # Get lists of file paths for training and test sets, respectively.
-        files_lists = []
-        for dir_1 in ['train', 'test']:
-            for dir_2 in ['pos', 'neg']:
-                dir_path = os.path.join(self._data_path, dir_1, dir_2) 
-                files_lists.append(self._file_util.get_files(dir_path))
-
-        train_set_paths = files_lists[0] + files_lists[1]
-        test_set_paths = files_lists[2] + files_lists[3] 
-                 
-        # Build appropriate dataframes. 
-        train_set = self._build_dataframe(train_set_paths)
-        test_set = self._build_dataframe(test_set_paths) 
-
-        return train_set, test_set            
-
+        return super(IMDBDataset, self).get_dataset() 

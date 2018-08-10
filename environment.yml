@@ -1,6 +1,0 @@
-name: doc2vec_env
-dependencies:
-    - pandas
-    - lxml
-    - beautifulsoup4
-
