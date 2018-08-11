@@ -6,10 +6,8 @@ from data_loader.util import get_files_from_dir
 class News20Dataset(Dataset):
     """A wrapper class for 20 Newsgroup dataset."""
 
-
     def __init__(self, data_path):
-        super(News20Dataset, self).__init__(data_path)
-
+        super().__init__(data_path)
 
     def _get_file_paths(self, train_test_ratio=0.5):
         """Returns paths to files that make up training and test set, respectively.
@@ -33,7 +31,6 @@ class News20Dataset(Dataset):
 
         return train_set_paths, test_set_paths
  
-
     @staticmethod
     def _load_single_file(path):
         """Loads a single file from 20 Newsgroup dataset.
@@ -53,7 +50,6 @@ class News20Dataset(Dataset):
     
         return content, label
         
-
     @classmethod
     def _build_dataframe(cls, file_paths):
         """Builds appropriate dataframe from all given data files.
@@ -64,9 +60,8 @@ class News20Dataset(Dataset):
             dataframe (pandas.DataFrame): the resulting dataframe.            
 
         """
-        return super(News20Dataset, cls)._build_dataframe(file_paths)
+        return super()._build_dataframe(file_paths)
 
- 
     def get_dataset(self):
         """Returns 20 Newsgroup dataset.
        
@@ -75,5 +70,5 @@ class News20Dataset(Dataset):
             test_set (pandas.DataFrame): test set dataframe.
 
         """                
-        return super(News20Dataset, self).get_dataset()
+        return super().get_dataset()
  

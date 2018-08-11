@@ -6,10 +6,8 @@ from data_loader.util import get_files_from_dir
 class LingspamDataset(Dataset):
     """A wrapper class for Ling-Spam dataset."""
     
-
     def __init__(self, data_path):
-        super(LingspamDataset, self).__init__(data_path)
-    
+        super().__init__(data_path)
     
     def _get_file_paths(self, train_test_ratio=0.5):
         """Returns paths to files that make up training and test set, respectively.
@@ -32,7 +30,6 @@ class LingspamDataset(Dataset):
         test_set_paths = files_list[breakpoint:]
         
         return train_set_paths, test_set_paths
-
 
     @staticmethod
     def _load_single_file(path):
@@ -59,7 +56,6 @@ class LingspamDataset(Dataset):
         
         return content, label
 
-
     @classmethod
     def _build_dataframe(cls, file_paths):
         """Builds appropriate dataframe from all given data files.
@@ -70,9 +66,8 @@ class LingspamDataset(Dataset):
             dataframe (pandas.DataFrame): the resulting dataframe.            
 
         """
-        return super(LingspamDataset, cls)._build_dataframe(file_paths)
+        return super()._build_dataframe(file_paths)
    
-
     def get_dataset(self):
         """Returns Ling-Spam dataset.
        
@@ -81,5 +76,5 @@ class LingspamDataset(Dataset):
             test_set (pandas.DataFrame): test set dataframe.
 
         """               
-        return super(LingspamDataset, self).get_dataset()
+        return super().get_dataset()
  

@@ -6,10 +6,8 @@ from data_loader.util import get_files_from_dir
 class IMDBDataset(Dataset):
     """A wrapper class for IMDB movie reviews dataset."""
 
-
     def __init__(self, data_path):
-        super(IMDBDataset, self).__init__(data_path)
-
+        super().__init__(data_path)
 
     def _get_file_paths(self):
         """Returns paths to files that make up training and test set, respectively.
@@ -30,7 +28,6 @@ class IMDBDataset(Dataset):
         test_set_paths = files_list[2] + files_list[3] 
         
         return train_set_paths, test_set_paths
-
 
     @staticmethod
     def _load_single_file(path):
@@ -64,7 +61,7 @@ class IMDBDataset(Dataset):
             dataframe (pandas.DataFrame): the resulting dataframe.            
 
         """
-        return super(IMDBDataset, cls)._build_dataframe(file_paths)        
+        return super()._build_dataframe(file_paths)        
         
 
     def get_dataset(self):
@@ -75,4 +72,4 @@ class IMDBDataset(Dataset):
             test_set (pandas.DataFrame): test set dataframe.
 
         """                
-        return super(IMDBDataset, self).get_dataset() 
+        return super().get_dataset() 
