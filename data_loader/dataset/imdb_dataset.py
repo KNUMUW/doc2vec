@@ -50,7 +50,6 @@ class IMDBDataset(Dataset):
 
         return content, label 
 
-    
     @classmethod
     def _build_dataframe(cls, file_paths):
         """Builds appropriate dataframe from all given data files.
@@ -63,7 +62,6 @@ class IMDBDataset(Dataset):
         """
         return super()._build_dataframe(file_paths)        
         
-
     def get_dataset(self):
         """Returns IMDB movie reviews dataset.
        
@@ -72,4 +70,5 @@ class IMDBDataset(Dataset):
             test_set (pandas.DataFrame): test set dataframe.
 
         """                
-        return super().get_dataset() 
+        return super().get_dataset()
+ 

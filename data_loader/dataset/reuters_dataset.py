@@ -17,7 +17,7 @@ class BlockProducer(mp.Process):
     Attributes:
         _num_consumer (int): how many BlockConsumer objects are spawned.
         _file_paths (list(str)): paths to data files to process.
-        _task_queue (mp.JoinableQueue): the output queue containing <REUTERS> blocks.
+        _task_queue (mp.Queue): the output queue containing <REUTERS> blocks.
      
     """
 
@@ -54,7 +54,7 @@ class BlockConsumer(mp.Process):
     further processing.
     
     Attributes:
-        _task_queue (mp.JoinableQueue): the input queue containing <REUTERS> blocks.
+        _task_queue (mp.Queue): the input queue containing <REUTERS> blocks.
         _result_queue (mp.Queue): the output queue containing (document, labels) pairs. 
 
     """
@@ -70,12 +70,10 @@ class BlockConsumer(mp.Process):
             idx, task = self._task_queue.get()
             # Check if poison pill.
             if task is None:
-                self._task_queue.task_done()
                 break
             
             # Parse the block for content and labels.
             document, labels = self._process_data(task)      
-            self._task_queue.task_done()
             
             # If the block contains valid data - push it to results.
             if document and all(labels):
@@ -97,8 +95,7 @@ class BlockConsumer(mp.Process):
         parser = etree.HTMLParser()
 
         # Get the document contents.
-        doc = re.search(r'<BODY>.*<\/BODY>', task, re.DOTALL)
-        
+        doc = re.search(r'<BODY>.*<\/BODY>', task, re.DOTALL) 
         if doc:
             doc = etree.fromstring(doc.group(0), parser)
             doc = doc.xpath('//body/text()')[0]
@@ -107,7 +104,6 @@ class BlockConsumer(mp.Process):
 
         # Get the topics (labels).
         labels = re.search(r'<TOPICS>.*<\/TOPICS>', task, re.DOTALL)
-        
         if labels:
             labels = etree.fromstring(labels.group(0), parser)
             labels = labels.xpath('//d/text()')
@@ -155,7 +151,7 @@ class ResultConsumer(mp.Process):
             # Add the result to the results list.
             self._results_list.append((idx, result))
 
-        # Send the results back to the main thread.
+        # Restore the order and send the results back to the main thread.
         self._results_list.sort(key=itemgetter(0))
         self._results_list = [item[1] for item in self._results_list]
         self._conn.send(self._results_list)
@@ -187,7 +183,7 @@ class ReutersDataset(Dataset):
         """        
         # Initialize communication objects.
         parent_conn, child_conn = mp.Pipe()
-        tasks = mp.JoinableQueue()
+        tasks = mp.Queue()
         results = mp.Queue()
            
         # Initialize and start all workers.
@@ -201,9 +197,8 @@ class ReutersDataset(Dataset):
             consumer.start()
         block_producer.start()
 
-        # Wait initial workers to finish.
+        # Wait for initial workers to finish.
         block_producer.join()
-        tasks.join()
         for consumer in block_consumers:
             consumer.join()
         
