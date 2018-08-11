@@ -9,8 +9,7 @@ def get_files_from_dir(dir_path):
     Returns:
         file_paths (list(str)): paths to data files in given directory.   
 
-    """ 
-    
+    """     
     file_paths = []
 
     for entry in os.scandir(dir_path):

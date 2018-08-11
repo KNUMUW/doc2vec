@@ -7,6 +7,11 @@ from data_loader.util import get_files_from_dir
 
 
 class FileUtil:
+    """The idea so far is to have one producer process that would read the whole file and push <REUTERS> blocks to an mp.Queue 
+    (the point is: producer must be fast; gotta check the time to yield all the blocks e.g. with re package)
+    We would also have consumer processes that would consume blocks from queue - filter them (are topics and contents valid) and
+    then push content with label to a single (thread-safe) result list. Finally we construct a dataframe from that list.
+    """
     pass
 
 
@@ -26,6 +31,8 @@ class ReutersFileUtil(FileUtil):
  
         """
         
+        # re.findall(r'<REUTERS.*?<\/REUTERS>', data, re.DOTALL) - gets you list of REUTERS blocks
+ 
         with open(path, 'r', encoding='utf8', errors='ignore') as doc_file:
             file_content = doc_file.read()
        
@@ -43,6 +50,7 @@ class ReutersFileUtil(FileUtil):
             if art.content and art.content.text and art.topics.text:
                 valid_articles.append(art)
 
+        # TODO: we would like to parallelize dataframe building for this dataset.
         content = [art.content.text for art in valid_articles]
         label = [art.topics.text for art in valid_articles]
 
@@ -54,10 +62,17 @@ class ReutersDataset(Dataset):
 
 
     def __init__(self, data_path):
-        super(ReutersDataset, self).__init__(data_path)
-        self._file_util = ReutersFileUtil()
+        super(ReutersDataset, self).__init__(data_path) 
 
-    
+
+    def _get_file_paths(self):
+        """Returns paths to all available data files."""   
+        file_paths = get_files_from_dir(self._data_path)
+        file_paths = [path for path in file_paths if os.path.basename(path).startswith('reut')]                  
+        
+        return file_paths
+
+
     def get_dataset(self):
         """Returns Reuters dataset.
        
@@ -66,15 +81,10 @@ class ReutersDataset(Dataset):
             test_set (pandas.DataFrame): test set dataframe.
 
         """                        
-        files_list = self._file_util.get_files(self._data_path)
-        files_list = [path for path in files_list if os.path.basename(path).startswith('reut')]                  
-        
-        train_test_ratio = 0.5
-        breakpoint = int(train_test_ratio * len(files_list))
-        
-        train_set_paths = files_list[:breakpoint]
-        test_set_paths = files_list[breakpoint:]
-        
+        file_paths = self._get_file_paths() 
+
+        # TODO: employ producer-consumer pattern. 
+       
         # Build appropriate dataframes. 
         train_set = self._build_dataframe(train_set_paths)
         test_set = self._build_dataframe(test_set_paths) 

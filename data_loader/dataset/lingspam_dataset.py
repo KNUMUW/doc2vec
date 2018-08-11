@@ -54,7 +54,7 @@ class LingspamDataset(Dataset):
         else:
             label = 0
  
-        with open(path, 'r') as doc_file:
+        with open(path, 'r', encoding='utf8', errors='ignore') as doc_file:
             content = doc_file.read()
         
         return content, label
