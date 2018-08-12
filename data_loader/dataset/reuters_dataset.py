@@ -7,7 +7,6 @@ from operator import itemgetter
 from data_loader.dataset.dataset import Dataset
 from data_loader.util import get_files_from_dir
 
-# TODO: IDEA: actually BlockProducer and ResultReceiver functionality could be located directly in the main thread.
 
 class BlockProducer(mp.Process):
     """A producer class for single <REUTERS> blocks.
@@ -30,13 +29,14 @@ class BlockProducer(mp.Process):
     def run(self):
         # Indices are necessary for train/test split to be consistent from run to run.
         idx = 0
+        
+        # Go over all the data files.
         for path in self._file_paths:
-            # Get <REUTERS> blocks from given file.
             with open(path, 'r', encoding='utf8', errors='ignore') as doc_file:
                 file_content = doc_file.read()
-            blocks = re.findall(r'<REUTERS.*?<\/REUTERS>', file_content, re.DOTALL)
-            
-            # Push the blocks to output queue.
+
+            # Get <REUTERS> blocks from given file and push them to output queue.
+            blocks = re.findall(r'<REUTERS.*?<\/REUTERS>', file_content, re.DOTALL)            
             for block in blocks:
                 self._task_queue.put((idx, block))
                 idx += 1
@@ -82,7 +82,8 @@ class BlockConsumer(mp.Process):
         # Send poison pill to the ResultConsumer.
         self._result_queue.put((None, None))
 
-    def _process_data(self, task):
+    @staticmethod
+    def _process_data(task):
         """Returns document contents and labels (if found) from a <REUTERS> block.
 
         Args:
