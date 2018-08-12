@@ -187,7 +187,7 @@ class ReutersDataset(Dataset):
         results = mp.Queue()
            
         # Initialize and start all workers.
-        num_consumers = mp.cpu_count() - 2
+        num_consumers = mp.cpu_count() 
         block_producer = BlockProducer(num_consumers, file_paths, tasks)
         block_consumers = [BlockConsumer(tasks, results) for _ in range(num_consumers)]
         result_consumer = ResultConsumer(num_consumers, results, child_conn)
