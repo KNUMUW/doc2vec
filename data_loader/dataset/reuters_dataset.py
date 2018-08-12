@@ -98,7 +98,11 @@ class BlockConsumer(mp.Process):
         doc = re.search(r'<BODY>.*<\/BODY>', task, re.DOTALL) 
         if doc:
             doc = etree.fromstring(doc.group(0), parser)
-            doc = doc.xpath('//body/text()')[0]
+            doc = doc.xpath('//body/text()')
+            if doc:
+                doc = doc[0]
+            else:
+                doc = ''
         else:
             doc = ''
 
@@ -126,7 +130,7 @@ class ResultConsumer(mp.Process):
     Attributes:
         _num_consumer (int): how many BlockConsumer objects are spawned.
         _result_queue (mp.Queue): the input queue containing (document, labels) pairs. 
-        _results_list (list): the list of (document, labels) pairs to be returned 
+        _results_list (list): the list of (document, labels) pairs to be returned.
         _conn (mp.connection.Connection): one end of a pipe to send results to main thread.
 
     """
@@ -141,7 +145,7 @@ class ResultConsumer(mp.Process):
     def run(self):
         poison_count = 0
         while poison_count < self._num_consumer:
-            # Get the message.
+            # Get a message.
             idx, result = self._result_queue.get()        
             # Check if poison pill.
             if result is None:
