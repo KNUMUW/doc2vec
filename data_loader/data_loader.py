@@ -17,11 +17,11 @@ class DataLoader:
     _package_absolute_path = os.path.abspath(os.path.dirname(__file__))
     _default_data_dir = os.path.join(_package_absolute_path, '../data/')
 
-
     def __init__(self, data_path=_default_data_dir): 
         self._data_path = data_path
         self._datasets = {}
-
+        
+        # IDEA: datasets could be initialized via a configuration file instead of having these values hardcoded.
         imdb_dataset_path = os.path.join(data_path, 'imdb_reviews', 'aclImdb')
         lingspam_dataset_path = os.path.join(data_path, 'lingspam_public', 'bare')        
         news20_dataset_path = os.path.join(data_path, 'news20', '20_newsgroup')
@@ -31,8 +31,7 @@ class DataLoader:
         self._datasets['lingspam_public'] = LingspamDataset(lingspam_dataset_path)
         self._datasets['news20'] = News20Dataset(news20_dataset_path) 
         self._datasets['reuters21578'] = ReutersDataset(reuters_dataset_path)        
-
-
+   
     def load_dataset(self, settings):
         """Returns  given dataset split between training and test set.
         
@@ -48,8 +47,7 @@ class DataLoader:
             >>> with open('experiment_1.txt', 'r') as settings:
             ...     train_set, test_set = loader.load_dataset(settings)        
 
-        """ 
-        
+        """       
         settings = json.load(settings)
         dataset_name = settings['dataset']
 
