@@ -1,5 +1,4 @@
 import os 
-import json
 import pandas as pd
 from data_loader.dataset import IMDBDataset, LingspamDataset, News20Dataset, ReutersDataset
 
@@ -42,6 +41,7 @@ class DataLoader:
             test_set (pd.DataFrame): as above
         
         Example:
+            >>> import json
             >>> from data_loader import DataLoader
             >>> loader = DataLoader()
             >>> with open('experiment_1.txt', 'r') as settings:
