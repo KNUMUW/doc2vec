@@ -36,7 +36,7 @@ class DataLoader:
         """Returns  given dataset split between training and test set.
         
         Args:
-            settings (file object): experiment description in JSON format 
+            settings (dict): experiment description. 
         Returns:
             train_set (pd.DataFrame): dataframe containing individual labeled documents from dataset 
             test_set (pd.DataFrame): as above
@@ -45,10 +45,10 @@ class DataLoader:
             >>> from data_loader import DataLoader
             >>> loader = DataLoader()
             >>> with open('experiment_1.txt', 'r') as settings:
+            ...     settings = json.load(settings)
             ...     train_set, test_set = loader.load_dataset(settings)        
 
         """       
-        settings = json.load(settings)
         dataset_name = settings['dataset']
 
         if dataset_name in self._datasets.keys():
