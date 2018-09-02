@@ -12,6 +12,7 @@ class TaggedDocumentIterator:
         _documents (list(list(str))): a list of tokenized documents.
         _labels (list): a list of document labels (commonly just subsequent integers).
         size (int): number of stored documents. 
+
     """
 
     def __init__(self, documents, labels):
@@ -74,8 +75,8 @@ class Doc2VecWrapper:
 
         """
         # Some preliminaries.
+        vector_length = settings['vector_length']        
         labels = list(prep_dataset.index)
-        vector_length = settings['vector_length']
         doc_iterator = TaggedDocumentIterator(prep_dataset, labels)
         
         # Get vector representations.
