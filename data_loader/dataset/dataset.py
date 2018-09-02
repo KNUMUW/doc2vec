@@ -1,3 +1,5 @@
+import os
+import logging
 import pandas as pd
 import multiprocessing as mp
 from abc import ABC, abstractmethod
@@ -13,7 +15,12 @@ class Dataset(ABC):
     """    
 
     def __init__(self, data_path):
-        self._data_path = data_path
+        if os.path.exists(data_path):
+            self._data_path = data_path
+            self.logger = logging.getLogger(self.__class__.__name__)
+            self.logger.setLevel(logging.INFO)
+        else:
+            raise FileNotFoundError('Data directory not found.')
 
     def _get_file_paths(self):
         """Returns paths to files that make up training and test set, respectively.

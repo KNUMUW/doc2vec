@@ -1,3 +1,4 @@
+import logging
 import os
 import re
 import pandas as pd
@@ -192,6 +193,7 @@ class ReutersDataset(Dataset):
         results = mp.Queue()
            
         # Initialize and start all workers.
+        self.logger.info('Initializing workers...')
         num_consumers = mp.cpu_count() 
         block_producer = BlockProducer(num_consumers, file_paths, tasks)
         block_consumers = [BlockConsumer(tasks, results) for _ in range(num_consumers)]
@@ -203,6 +205,7 @@ class ReutersDataset(Dataset):
         block_producer.start()
 
         # Wait for initial workers to finish.
+        self.logger.info('Processing...')
         block_producer.join()
         for consumer in block_consumers:
             consumer.join()
@@ -217,8 +220,7 @@ class ReutersDataset(Dataset):
 
     @staticmethod
     def _split(data, train_test_ratio=0.5):
-        """Returns data list split in two in given ratio."""
-        
+        """Returns data list split in two in given ratio.""" 
         breakpoint = int(train_test_ratio * len(data))        
         train_data = data[:breakpoint]
         test_data = data[breakpoint:]
@@ -234,8 +236,7 @@ class ReutersDataset(Dataset):
         Returns:
             dataframe (pandas.DataFrame): the resulting dataframe.            
 
-        """
- 
+        """ 
         data_dict = {}
         data_dict['document'] = [res[0] for res in results]         
         data_dict['label'] = [res[1] for res in results]       
@@ -255,6 +256,7 @@ class ReutersDataset(Dataset):
 
         # Get list of all documents with corresponding labels.
         results = self._get_results(file_paths)  
+        self.logger.info('Documents retrieved.')
 
         # Split the results between training and test sets.
         train_results, test_results = self._split(results)
@@ -262,6 +264,7 @@ class ReutersDataset(Dataset):
         # Build appropriate dataframes. 
         train_set = self._build_dataframe(train_results)
         test_set = self._build_dataframe(test_results) 
+        self.logger.info('Dataframes built.')
 
         return train_set, test_set            
  

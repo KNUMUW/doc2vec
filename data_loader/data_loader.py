@@ -1,6 +1,9 @@
 import os 
+import logging
 import pandas as pd
 from data_loader.dataset import IMDBDataset, LingspamDataset, News20Dataset, ReutersDataset
+
+logging.basicConfig(level=logging.INFO)
 
 
 class DataLoader:
