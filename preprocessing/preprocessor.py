@@ -43,8 +43,8 @@ class Preprocessor:
 
 		preprocessed = reduce(lambda v, preprocessor: preprocessor.process(v), self._processors, text)
 
-		if isinstance(preprocessed, Iterable) and not isinstance(preprocessed, str):
-			preprocessed=" ".join(preprocessed)
+		#if isinstance(preprocessed, Iterable) and not isinstance(preprocessed, str):
+		#	preprocessed=" ".join(preprocessed)
 
 		return preprocessed
 		
