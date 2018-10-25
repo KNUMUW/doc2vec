@@ -1,3 +1,4 @@
-lxml==4.2.3
-pandas==0.23.3
-nltk==3.3
+lxml>=4.2.3
+pandas>=0.23.3
+nltk>=3.3
+scikit-learn>=0.18.2

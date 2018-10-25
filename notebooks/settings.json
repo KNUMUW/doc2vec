@@ -1,0 +1,123 @@
+{
+
+ "dataset":"imdb_reviews",
+
+ "lowercase":true,
+
+ "tokenizer": "WordTokenizer",
+
+ "stemming": true,
+
+ "lematization":true,
+
+ "stopwords_remove": true,
+
+ "vector_length" : 5000,
+
+ "models":[
+
+    {
+
+    "name":"m1",
+
+    "type":"LogisticRegression",
+
+    "module": "sklearn.linear_model",
+
+    "params":
+
+    {
+
+        "C":6.0,
+
+        "dual":true,
+
+        "fit_intercept":false,
+
+        "intercept_scaling":3,
+
+        "max_iter":190,
+
+        "multi_class":"ovr",
+
+        "n_jobs":1, 
+
+        "penalty":"l2", 
+
+        "solver":"liblinear", 
+
+        "tol":0.0001, 
+
+        "verbose":0, 
+
+        "warm_start":false}
+
+    },
+
+    {
+
+    "name":"m2",
+
+    "type":"MLPClassifier",
+
+    "module":"sklearn.neural_network",
+
+    "params":{
+
+        "activation":"relu",
+
+        "alpha":1e-05,
+
+        "batch_size":"auto",
+
+        "beta_1":0.9,
+
+        "beta_2":0.999,
+
+        "early_stopping":false,
+
+        "epsilon":1e-08,
+
+        "hidden_layer_sizes":[5, 2],
+
+        "learning_rate":"constant",
+
+        "learning_rate_init":0.001,
+
+        "max_iter":200,
+
+        "momentum":0.9,
+
+        "nesterovs_momentum":true,
+
+        "power_t":0.5,
+
+        "random_state":1,
+
+        "shuffle":true,
+
+        "solver":"lbfgs",
+
+        "tol":0.0001,
+
+        "validation_fraction":0.1,
+
+        "verbose":false,
+
+        "warm_start":false
+
+    }}],
+
+ "metric":{
+
+ "name":"f1_score",
+
+ "params":{
+
+ "average":"micro"
+
+ }
+
+ }
+
+ }
